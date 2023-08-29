@@ -33,7 +33,6 @@ def send(message, type='test'):
         ids = ADMIN_IDS
     else:
         ids = get_ids()
-
     text = get_message(message['TEXT_FILE'])
 
     if message['PHOTO_FILE'] is None:
@@ -55,14 +54,14 @@ def send(message, type='test'):
 
 def schedule_sending(mail):
     for m in mail['messages']:
-        schedule.every().day.at(m['TIME']).do(send, m, mail['MAIL_TYPE'])
+        schedule.every().day.at(m['TIME']).do(lambda: send(m, mail['MAIL_TYPE']))
     while True:
         schedule.run_pending()
         time.sleep(1)
 
 
 if __name__ == '__main__':
-    if mail['MAIL_TYPE'] == 'test':
+    if mail['MAIL_TYPE'] == 'test' or mail['MAIL_TYPE'] == 'inst_mail':
         for m in mail['messages']:
             send(m, mail['MAIL_TYPE'])
     elif mail['MAIL_TYPE'] == 'mail' or mail['MAIL_TYPE'] == 'test_mail':

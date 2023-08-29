@@ -3,31 +3,12 @@
 mail = {
 
     # 'mail' - если надо разослать всем,
+    # 'inst_mail' - если надо разослать всем сразу
     # 'test' - если надо проверить(сразу же отправится только определенным пользователям)
     # 'test_mail' - как 'test', но с таймером
-    'MAIL_TYPE': 'test_mail',
+    'MAIL_TYPE': 'inst_mail',
 
     'messages': [
-        # ---Начало сообщения
-        {
-
-            # имя файла в папке messages
-            'TEXT_FILE': 'message.txt',
-
-            # имя фото в папке messages(если без фото, то None)
-            'PHOTO_FILE': None,
-
-            # время рассылки в формате hh:mm
-            'TIME': '10:33',
-
-            # если в сообщении ссылка
-            # True - спрятать (для zoom ссылок)
-            # False - показывать (превьюхи Youtube)
-            'DISABLE_PREVIEW': False
-
-        },
-        # ---Конец сообщения
-
         # ---Начало сообщения
         {
 
@@ -35,10 +16,10 @@ mail = {
             'TEXT_FILE': 'message2.txt',
 
             # имя фото в папке messages(если без фото, то None)
-            'PHOTO_FILE': '10.jpg',
+            'PHOTO_FILE': None,
 
             # время рассылки в формате hh:mm
-            'TIME': '10:33',
+            'TIME': '11:45',
 
             # если в сообщении ссылка
             # True - спрятать (для zoom ссылок)
@@ -56,4 +37,4 @@ mail = {
 ADMIN_IDS = []
 
 # main token
-TOKEN = "TOKEN"
+TOKEN = ""
