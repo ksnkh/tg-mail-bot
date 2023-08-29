@@ -27,42 +27,43 @@ def get_message(name):
         return ''.join(lines)
 
 
-def send(mail):
+def send(message, type='test'):
     bot = telebot.TeleBot(TOKEN)
-    if mail['mail_type'] == 'test':
+    if type == 'test' or type == 'test_mail':
         ids = ADMIN_IDS
     else:
         ids = get_ids()
 
-    message = get_message(mail['text_file'])
+    text = get_message(message['TEXT_FILE'])
 
-    if mail['photo_file'] is None:
+    if message['PHOTO_FILE'] is None:
         for id in ids:
             try:
-                bot.send_message(id, message, disable_web_page_preview=mail['disable_preview'])
+                bot.send_message(id, text, disable_web_page_preview=message['DISABLE_PREVIEW'])
             except Exception as e:
                 pass
     else:
-        with open(f"messages/{mail['photo_file']}", 'rb') as photo:
+        with open(f"messages/{message['PHOTO_FILE']}", 'rb') as photo:
             for id in ids:
                 try:
-                    bot.send_photo(id, photo, caption=message)
+                    bot.send_photo(id, photo, caption=text)
                 except Exception as e:
                     pass
-
-    print('Done')
+    print('sent')
     return schedule.CancelJob
 
 
 def schedule_sending(mail):
-    schedule.every().day.at(mail['time']).do(send, mail)
+    for m in mail['messages']:
+        schedule.every().day.at(m['TIME']).do(send, m, mail['MAIL_TYPE'])
     while True:
         schedule.run_pending()
         time.sleep(1)
 
 
 if __name__ == '__main__':
-    if mail['mail_type'] == 'test':
-        send(mail)
-    if mail['mail_type'] == 'main':
+    if mail['MAIL_TYPE'] == 'test':
+        for m in mail['messages']:
+            send(m, mail['MAIL_TYPE'])
+    elif mail['MAIL_TYPE'] == 'mail' or mail['MAIL_TYPE'] == 'test_mail':
         schedule_sending(mail)
