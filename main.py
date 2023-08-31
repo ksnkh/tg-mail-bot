@@ -6,13 +6,13 @@ import schedule
 import time
 
 
-def get_ids():
+def get_ids(sheet):
     scope = ['https://www.googleapis.com/auth/spreadsheets',
              'https://www.googleapis.com/auth/drive']
     cred_file = 'sheets_key.json'
     credentials = ServiceAccountCredentials.from_json_keyfile_name(cred_file, scope)
     client = gspread.authorize(credentials)
-    sheet = client.open('user data').sheet1
+    sheet = client.open('user data').get_worksheet(sheet - 1)
     data = sheet.get_all_values()
     ids = []
     for i in data[1:]:
@@ -27,12 +27,12 @@ def get_message(name):
         return ''.join(lines)
 
 
-def send(message, type='test'):
+def send(message, type='test', sheet='99'):
     bot = telebot.TeleBot(TOKEN)
     if type == 'test' or type == 'test_mail':
         ids = ADMIN_IDS
     else:
-        ids = get_ids()
+        ids = get_ids(sheet)
     text = get_message(message['TEXT_FILE'])
 
     if message['PHOTO_FILE'] is None:
@@ -54,7 +54,7 @@ def send(message, type='test'):
 
 def schedule_sending(mail):
     for m in mail['messages']:
-        schedule.every().day.at(m['TIME']).do(send, message=m, type=mail['MAIL_TYPE'])
+        schedule.every().day.at(m['TIME']).do(send, message=m, type=mail['MAIL_TYPE'], sheet=mail['SHEET'])
     while True:
         schedule.run_pending()
         time.sleep(1)
@@ -63,6 +63,6 @@ def schedule_sending(mail):
 if __name__ == '__main__':
     if mail['MAIL_TYPE'] == 'test' or mail['MAIL_TYPE'] == 'inst_mail':
         for m in mail['messages']:
-            send(m, mail['MAIL_TYPE'])
+            send(m, mail['MAIL_TYPE'], mail['SHEET'])
     elif mail['MAIL_TYPE'] == 'mail' or mail['MAIL_TYPE'] == 'test_mail':
         schedule_sending(mail)
