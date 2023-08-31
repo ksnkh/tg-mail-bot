@@ -48,13 +48,13 @@ def send(message, type='test'):
                     bot.send_photo(id, photo, caption=text)
                 except Exception as e:
                     pass
-    print('sent')
+    print(f'{message["TEXT_FILE"]} is sent')
     return schedule.CancelJob
 
 
 def schedule_sending(mail):
     for m in mail['messages']:
-        schedule.every().day.at(m['TIME']).do(lambda: send(m, mail['MAIL_TYPE']))
+        schedule.every().day.at(m['TIME']).do(send, message=m, type=mail['MAIL_TYPE'])
     while True:
         schedule.run_pending()
         time.sleep(1)
